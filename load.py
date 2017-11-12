@@ -48,9 +48,9 @@ class Sweeper:
 		self.sysx=x
 		self.sysy=y
 		self.sysz=z
-		if getDistanceSol(self.sysx,self.sysy,self.sysz):
+		if getDistanceSol(self.sysx,self.sysy,self.sysz) <= 200:
 			this.status["text"]="in range"
-			getSystems()
+			self.getSystems()
 			if completed(system)==True:
 				this.status["text"]="This system has been fully surveyed"
 		else:
