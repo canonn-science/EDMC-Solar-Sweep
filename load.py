@@ -6,6 +6,7 @@ import Tkinter as tk
 import requests
 import os
 from urllib import quote_plus
+from  math import sqrt,pow,trunc
 
 from config import applongname, appversion
 import myNotebook as nb
@@ -86,6 +87,14 @@ def debug(value,level=None):
 	if this.debuglevel >= level:
 		print "["+myPlugin+"] "+str(value)
 
+def edsmGetSystem(system):
+	url = 'https://www.edsm.net/api-v1/system?systemName='+quote_plus(system)+'&showCoordinates=1'		
+	#print url
+	r = requests.get(url)
+	s =  r.json()
+	#print s
+	return s["coords"]["x"],s["coords"]["y"],s["coords"]["z"]
+		
 def plugin_start():
 	"""
 	Load Template plugin into EDMC
@@ -107,22 +116,23 @@ def plugin_app(parent):
 
 # Log in
 
-# Settings dialog dismissed
-def prefs_changed():
-	config.set("mySetting", this.bmp_loc.get())
-	
-	this.status['text'] = "Prefs changed"
-	# config.setint('BMP', this.bmp_loc.get())	# Store new value in config
 
 # Detect journal events
 def journal_entry(cmdr, system, station, entry):
 
-	v = tk.StringVar(value=config.get("mySetting")).get()
+		
+	if entry['event'] == 'FSDJump':
+							
+		this.sweep.fsdJump(cmdr, system, station, entry)
 	
-	this.status['text'] = entry['event']
+	if entry['event'] == 'Location':
+		this.sweep.Location(cmdr, system, station, entry)
+		
+	if entry['event'] == 'StartUp':
+		this.sweep.startUp(cmdr, system, station, entry)		
 
 # Update some data here too
 def cmdr_data(data):
-	print "Commander Data"
+	this.sweep.cmdrData(data)
 	
 
