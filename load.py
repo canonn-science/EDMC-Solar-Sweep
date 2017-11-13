@@ -23,48 +23,62 @@ myPlugin = "Solar-Sweep"
 
 class Sweeper:
 
-	def __init__(self,frame):
+	def __init__(self,parent):
 		debug("Initiating Solar Sweep")
 		self.completed={}
+		self.parent=parent
 		
 	def fsdJump(self,cmdr, system, station, entry):
-		self.setStatus(system,entry["StarPos"][0],entry["StarPos"][1],entry["StarPos"][2])	
+		self.cmdr=cmdr
+		self.system=system
+		self.setStatus(self.system,entry["StarPos"][0],entry["StarPos"][1],entry["StarPos"][2])	
 		
 			
 	def cmdrData(self,data):
 		debug(data,2)
-		system=data["lastSystem"]["name"]
-		x,y,z = edsmGetSystem(system)
-		self.setStatus(system,x,y,z)
+		self.cmdr=data["commander"]["name"]
+		self.system=data["lastSystem"]["name"]
+		x,y,z = edsmGetSystem(self.system)
+		self.setStatus(self.system,x,y,z)
 		
 			
 	def Location(self,cmdr, system, station, entry):		
+		self.cmdr=cmdr
+		self.system=system
 		debug("Setting Location",2)
-		self.setStatus(system,entry["StarPos"][0],entry["StarPos"][1],entry["StarPos"][2])
+		self.setStatus(self.system,entry["StarPos"][0],entry["StarPos"][1],entry["StarPos"][2])
 		
 				
 	def setStatus(self,system,x,y,z):
-		if getDistanceSol(x,y,z) <= 400:
+		if getDistanceSol(x,y,z) <= 200:
 			#self.completed["Merope"]=True
 			self.getSystems()
+			this.frame.grid()
+			
 			try:
 				if self.completed[system]==True:
+					this.status["width"]=200
+					this.status["width"]=self.parent.winfo_width()-10
 					this.status["text"]="This system has been fully surveyed"
-					this.url["text"]="Report to Canonn"
-					this.url["url"]="https://docs.google.com/forms/d/e/1FAIpQLSe1rXxMX0sML3EH0At-_mr-KZrJrj4EdhY0o-o9O0UJ7CoyLg/viewform?usp=pp_url&entry.593288406=system&entry.273955456=cmdr&entry.2010270717=pop&entry.543965287=Yes&entry.1149469095=No&entry.1979972271=Listening+Post&entry.1731234614=PICTURE"
+					#this.url["text"]="Report to Canonn"
+					#this.url["url"]="https://docs.google.com/forms/d/e/1FAIpQLSe1rXxMX0sML3EH0At-_mr-KZrJrj4EdhY0o-o9O0UJ7CoyLg/viewform?usp=pp_url&entry.593288406="+quote_plus(this.system)+"&entry.273955456="+quote_plus(this.cmdr)+"&entry.543965287=No&entry.1149469095=No"
 					this.status.grid()
 					this.url.grid_remove()
 			except:
-				this.status["text"]="The Aim of the Sol Sweep is to create a detailed survey of every system 200 ly around Sol. For each system, I am asking that each body is flown within 1000ls of, to ensure that nothing in the system is missed. The objects that are of interest are Generation Ships, Listening Posts, UCBs, Tourist Beacons, INRA Posts, and other unusual or unique objects"	
-				
+				this.status["text"]="Fly within 1000ls of each body and log any points of interest."	
+				this.status["width"]=200
+				this.status["width"]=self.parent.winfo_width()-10				
 				this.url["text"]="Report to Canonn"
-				this.url["url"]="https://docs.google.com/forms/d/e/1FAIpQLSe1rXxMX0sML3EH0At-_mr-KZrJrj4EdhY0o-o9O0UJ7CoyLg/viewform?usp=pp_url&entry.593288406=system&entry.273955456=cmdr&entry.2010270717=pop&entry.543965287=Yes&entry.1149469095=No&entry.1979972271=Listening+Post&entry.1731234614=PICTURE"
+				sys=quote_plus(self.system)
+				cmd=quote_plus(self.cmdr)
+				this.url["url"]="https://docs.google.com/forms/d/e/1FAIpQLSe1rXxMX0sML3EH0At-_mr-KZrJrj4EdhY0o-o9O0UJ7CoyLg/viewform?usp=pp_url&entry.593288406="+sys+"&entry.273955456="+cmd+"&entry.543965287=No&entry.1149469095=No"
 				this.label.grid()
 				this.status.grid()
 		else:
 			this.status.grid_remove()
 			this.label.grid_remove()
 			this.url.grid_remove()
+			this.frame.grid_remove()
 			
 	def getSystems(self):
 		#get list of completed systems
@@ -112,12 +126,13 @@ def plugin_app(parent):
 	this.frame.columnconfigure(2, weight=1)
 	
 	this.label = tk.Label(this.frame, text= myPlugin + ":")
-	this.status = tk.Message(this.frame,width=200, anchor=tk.W, text="Ready")
+	this.status = tk.Message(this.frame,width=0, anchor=tk.W, text="Ready")
 	this.url=HyperlinkLabel(this.frame, compound=tk.RIGHT, popup_copy = True)
 	
 	this.label.grid(row = 0, column = 0, sticky=tk.W)	
 	this.url.grid(row = 0, column = 1, sticky=tk.W)
-	this.status.grid(row = 1, column = 0, sticky=tk.W)
+	
+	this.status.grid(row = 1, column = 0, columnspan=2, sticky=tk.W)
 	
 	this.label.grid_remove
 	this.status.grid_remove
