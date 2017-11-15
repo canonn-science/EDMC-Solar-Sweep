@@ -10,9 +10,9 @@ Plugins extend the behaviour of [Elite Dangerous Market Connector](https://githu
 
 To install this plugin:
 
-Download the [latest release](https://github.com/canonn-science/EDMC-Solar-Sweep/releases)
+Download the [latest plugin release](https://github.com/canonn-science/EDMC-Solar-Sweep/releases)
 
->On the Plugins settings tab press the “Open” button. This reveals the plugins folder where this app looks for plugins.
+>On the Plugins settings tab in EDMC press the “Open” button. This reveals the plugins folder where this app looks for plugins.
 >Open the .zip archive that you downloaded and move the folder contained inside into the plugins folder.
 
 You will need to re-start EDMC for it to notice the new plugin.
