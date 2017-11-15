@@ -10,8 +10,8 @@ Plugins extend the behaviour of this ED Market Connector. To install this plugin
 
 Download the [latest release](https://github.com/canonn-science/EDMC-Solar-Sweep/releases)
 
-    On the Plugins settings tab press the “Open” button. This reveals the plugins folder where this app looks for plugins.
-    Open the .zip archive that you downloaded and move the folder contained inside into the plugins folder.
+>On the Plugins settings tab press the “Open” button. This reveals the plugins folder where this app looks for plugins.
+>Open the .zip archive that you downloaded and move the folder contained inside into the plugins folder.
 
 You will need to re-start EDMC for it to notice the new plugin.
 
