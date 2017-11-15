@@ -6,7 +6,7 @@ It also provides a clickable link to the survey form with key data already fille
 
 # Installation
 
-Plugins extend the behaviour of this [Elite Dangerous Market Connector](https://github.com/Marginal/EDMarketConnector/blob/master/README.md). 
+Plugins extend the behaviour of [Elite Dangerous Market Connector](https://github.com/Marginal/EDMarketConnector/blob/master/README.md). 
 
 To install this plugin:
 
