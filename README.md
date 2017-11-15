@@ -6,7 +6,9 @@ It also provides a clickable link to the survey form with key data already fille
 
 # Installation
 
-Plugins extend the behaviour of this ED Market Connector. To install this plugin:
+Plugins extend the behaviour of this [Elite Dangerous Market Connector](https://github.com/Marginal/EDMarketConnector/blob/master/README.md). 
+
+To install this plugin:
 
 Download the [latest release](https://github.com/canonn-science/EDMC-Solar-Sweep/releases)
 
