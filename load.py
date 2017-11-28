@@ -48,6 +48,11 @@ class Sweeper:
 		debug("Setting Location",2)
 		self.setStatus(self.system,entry["StarPos"][0],entry["StarPos"][1],entry["StarPos"][2])
 		
+	def startUp(self,cmdr, system, station, entry):
+		self.cmdr=cmdr
+		self.system=system
+		x,y,z = edsmGetSystem(self.system)
+		self.setStatus(self.system,x,y,z)
 				
 	def setStatus(self,system,x,y,z):
 		if getDistanceSol(x,y,z) <= 200:
@@ -64,6 +69,16 @@ class Sweeper:
 					#this.url["url"]="https://docs.google.com/forms/d/e/1FAIpQLSe1rXxMX0sML3EH0At-_mr-KZrJrj4EdhY0o-o9O0UJ7CoyLg/viewform?usp=pp_url&entry.593288406="+quote_plus(this.system)+"&entry.273955456="+quote_plus(this.cmdr)+"&entry.543965287=No&entry.1149469095=No"
 					this.status.grid()
 					this.url.grid_remove()
+				else:
+					this.status["text"]="Fly within 1000ls of each body and log any points of interest."	
+					this.status["width"]=200
+					this.status["width"]=self.parent.winfo_width()-10				
+					this.url["text"]="Report to Canonn"
+					sys=quote_plus(self.system)
+					cmd=quote_plus(self.cmdr)
+					this.url["url"]="https://docs.google.com/forms/d/e/1FAIpQLSe1rXxMX0sML3EH0At-_mr-KZrJrj4EdhY0o-o9O0UJ7CoyLg/viewform?usp=pp_url&entry.593288406="+sys+"&entry.273955456="+cmd+"&entry.543965287=No&entry.1149469095=No"
+					this.label.grid()
+					this.status.grid()
 			except:
 				this.status["text"]="Fly within 1000ls of each body and log any points of interest."	
 				this.status["width"]=200
@@ -162,6 +177,8 @@ def journal_entry(cmdr, system, station, entry):
 		
 	if entry['event'] == 'StartUp':
 		this.sweep.startUp(cmdr, system, station, entry)		
+		
+		
 
 # Update some data here too
 def cmdr_data(data):
