@@ -16,7 +16,7 @@ from config import config
 this = sys.modules[__name__]
 this.s = None
 this.prep = {}
-this.debuglevel=3
+this.debuglevel=1
 
 # Lets capture the plugin name we want the name - "EDMC -"
 myPlugin = "Solar-Sweep"
@@ -31,30 +31,35 @@ class Sweeper:
 	def fsdJump(self,cmdr, system, station, entry):
 		self.cmdr=cmdr
 		self.system=system
-		self.setStatus(self.system,entry["StarPos"][0],entry["StarPos"][1],entry["StarPos"][2])	
+		pop = entry["Population"] if "Population" in entry else 0
+		self.setStatus(self.system,entry["StarPos"][0],entry["StarPos"][1],entry["StarPos"][2],pop)	
 		
 			
 	def cmdrData(self,data):
+		debug("cmdrData",2)
 		debug(data,2)
 		self.cmdr=data["commander"]["name"]
 		self.system=data["lastSystem"]["name"]
-		x,y,z = edsmGetSystem(self.system)
-		self.setStatus(self.system,x,y,z)
+		x,y,z,pop = edsmGetSystem(self.system)
+		self.setStatus(self.system,x,y,z,pop)
 		
 			
 	def Location(self,cmdr, system, station, entry):		
+		debug("Location",2)
 		self.cmdr=cmdr
 		self.system=system
-		debug("Setting Location",2)
-		self.setStatus(self.system,entry["StarPos"][0],entry["StarPos"][1],entry["StarPos"][2])
+		x,y,z,pop = edsmGetSystem(self.system)
+		self.setStatus(self.system,x,y,z,pop)
 		
 	def startUp(self,cmdr, system, station, entry):
+		debug("Startup",2)
 		self.cmdr=cmdr
 		self.system=system
-		x,y,z = edsmGetSystem(self.system)
-		self.setStatus(self.system,x,y,z)
+		x,y,z,pop = edsmGetSystem(self.system)
+		self.setStatus(self.system,x,y,z,pop)
 				
-	def setStatus(self,system,x,y,z):
+	def setStatus(self,system,x,y,z,pop):
+		debug("population: "+str(pop),2)
 		if getDistanceSol(x,y,z) <= 200:
 			#self.completed["Merope"]=True
 			self.getSystems()
@@ -65,8 +70,6 @@ class Sweeper:
 					this.status["width"]=200
 					this.status["width"]=self.parent.winfo_width()-10
 					this.status["text"]="This system has been fully surveyed"
-					#this.url["text"]="Report to Canonn"
-					#this.url["url"]="https://docs.google.com/forms/d/e/1FAIpQLSe1rXxMX0sML3EH0At-_mr-KZrJrj4EdhY0o-o9O0UJ7CoyLg/viewform?usp=pp_url&entry.593288406="+quote_plus(this.system)+"&entry.273955456="+quote_plus(this.cmdr)+"&entry.543965287=No&entry.1149469095=No"
 					this.status.grid()
 					this.url.grid_remove()
 				else:
@@ -76,7 +79,7 @@ class Sweeper:
 					this.url["text"]="Report to Canonn"
 					sys=quote_plus(self.system)
 					cmd=quote_plus(self.cmdr)
-					this.url["url"]="https://docs.google.com/forms/d/e/1FAIpQLSe1rXxMX0sML3EH0At-_mr-KZrJrj4EdhY0o-o9O0UJ7CoyLg/viewform?usp=pp_url&entry.593288406="+sys+"&entry.273955456="+cmd+"&entry.543965287=No&entry.1149469095=No"
+					this.url["url"]="https://docs.google.com/forms/d/e/1FAIpQLSe1rXxMX0sML3EH0At-_mr-KZrJrj4EdhY0o-o9O0UJ7CoyLg/viewform?usp=pp_url&entry.593288406="+sys+"&entry.273955456="+cmd+"&entry.543965287=No&entry.1149469095=No&entry.2010270717="+str(pop)
 					this.label.grid()
 					this.status.grid()
 			except:
@@ -86,7 +89,7 @@ class Sweeper:
 				this.url["text"]="Report to Canonn"
 				sys=quote_plus(self.system)
 				cmd=quote_plus(self.cmdr)
-				this.url["url"]="https://docs.google.com/forms/d/e/1FAIpQLSe1rXxMX0sML3EH0At-_mr-KZrJrj4EdhY0o-o9O0UJ7CoyLg/viewform?usp=pp_url&entry.593288406="+sys+"&entry.273955456="+cmd+"&entry.543965287=No&entry.1149469095=No"
+				this.url["url"]="https://docs.google.com/forms/d/e/1FAIpQLSe1rXxMX0sML3EH0At-_mr-KZrJrj4EdhY0o-o9O0UJ7CoyLg/viewform?usp=pp_url&entry.593288406="+sys+"&entry.273955456="+cmd+"&entry.543965287=No&entry.1149469095=No&entry.2010270717="+str(pop)
 				this.label.grid()
 				this.status.grid()
 		else:
@@ -113,12 +116,14 @@ def debug(value,level=None):
 		print "["+myPlugin+"] "+str(value)
 
 def edsmGetSystem(system):
-	url = 'https://www.edsm.net/api-v1/system?systemName='+quote_plus(system)+'&showCoordinates=1'		
+	url = 'https://www.edsm.net/api-v1/system?systemName='+quote_plus(system)+'&showCoordinates=1&showInformation=1'		
 	#print url
 	r = requests.get(url)
 	s =  r.json()
 	#print s
-	return s["coords"]["x"],s["coords"]["y"],s["coords"]["z"]
+	pop = s["information"]["population"] if ("information" in s and "population" in s["information"]) else 0
+	return s["coords"]["x"],s["coords"]["y"],s["coords"]["z"],pop
+
 		
 def plugin_start():
 	"""
